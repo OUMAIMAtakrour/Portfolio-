@@ -16,7 +16,6 @@ import {
   useAnimation,
 } from "framer-motion";
 
-
 const ParticleBackground = () => {
   const [particles, setParticles] = useState([]);
 
@@ -286,136 +285,179 @@ const ProjectCard = ({ project }) => {
   );
 };
 
-const SkillsSphere = () => {
-  const [activeSkill, setActiveSkill] = useState(null);
-  const sphereRef = useRef(null);
-  const isInView = useInView(sphereRef);
+const SkillsShowcase = () => {
+  const [activeCategory, setActiveCategory] = useState(null);
 
   const skillCategories = [
     {
       name: "Frontend",
-      skills: ["React", "Next.js", "Tailwind", "Bootstrap"],
-      color: "text-cyan-300",
+      icon: "⚡",
+      skills: [
+        "React.js",
+        "Next.js",
+        "TypeScript",
+        "React Native",
+        "Redux",
+        "Tailwind",
+        "Bootstrap",
+      ],
+      color: "from-cyan-400/20 to-blue-400/20",
     },
     {
       name: "Backend",
-      skills: ["Node.js", "Express", "Docker", "Microservices"],
-      color: "text-blue-300",
+      icon: "🔧",
+      skills: [
+        "PHP (Laravel)",
+        "PHP (Symfony)",
+        "Node.js",
+        "Express.js",
+        "NestJS",
+        "Python",
+      ],
+      color: "from-blue-400/20 to-purple-400/20",
     },
     {
-      name: "Tools & Cloud",
-      skills: ["AWS", "Git", "CI/CD", "Github"],
-      color: "text-purple-300",
+      name: "DevOps & Tools",
+      icon: "🚀",
+      skills: ["Docker", "CI/CD", "Git", "GitHub", "Jira"],
+      color: "from-purple-400/20 to-pink-400/20",
+    },
+    {
+      name: "Design & UI",
+      icon: "🎨",
+      skills: ["Figma", "Adobe", "UI/UX", "Responsive Design"],
+      color: "from-pink-400/20 to-orange-400/20",
+    },
+    {
+      name: "Databases",
+      icon: "💾",
+      skills: ["MongoDB", "MySQL", "PostgreSQL"],
+      color: "from-orange-400/20 to-yellow-400/20",
+    },
+    {
+      name: "Architecture & Methods",
+      icon: "🏗️",
+      skills: [
+        "Monolithic",
+        "Microservice",
+        "Repository Pattern",
+        "Modular Design",
+        "Agile",
+        "Scrum",
+      ],
+      color: "from-yellow-400/20 to-green-400/20",
     },
   ];
 
-  const calculatePosition = (index, total) => {
-    const radius = 200;
-    const angle = (index / total) * Math.PI * 2;
-    return {
-      x: Math.cos(angle) * radius,
-      y: Math.sin(angle) * radius,
-    };
-  };
-
   return (
-    <div
-      ref={sphereRef}
-      className="relative w-full h-[600px] flex items-center justify-center"
-    >
-      <motion.div
-        initial={{ scale: 0.5, opacity: 0 }}
-        animate={
-          isInView ? { scale: 1, opacity: 1 } : { scale: 0.5, opacity: 0 }
-        }
-        transition={{ duration: 0.5 }}
-        className="relative w-[50px] h-[200px]"
-      >
-        {skillCategories.flatMap((category, categoryIndex) =>
-          category.skills.map((skill, skillIndex) => {
-            const total = skillCategories.reduce(
-              (sum, cat) => sum + cat.skills.length,
-              0
-            );
-            const position = calculatePosition(
-              categoryIndex * category.skills.length + skillIndex,
-              total
-            );
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="max-w-6xl w-full">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-4xl font-light text-center text-white mb-12 tracking-tight"
+        >
+          Technical <span className="text-cyan-300">Expertise</span>
+        </motion.h2>
 
-            return (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {skillCategories.map((category, index) => (
+            <motion.div
+              key={category.name}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              onHoverStart={() => setActiveCategory(category.name)}
+              onHoverEnd={() => setActiveCategory(null)}
+              className={`
+                relative p-6 rounded-xl
+                bg-gradient-to-br ${category.color}
+                border border-white/10
+                backdrop-blur-sm
+                group
+                hover:border-cyan-300/30
+                transition-all duration-300
+                h-full
+              `}
+            >
+              <div className="flex items-center mb-4">
+                <span className="text-2xl mr-2">{category.icon}</span>
+                <h3 className="text-xl font-light text-white">
+                  {category.name}
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                {category.skills.map((skill, skillIndex) => (
+                  <motion.div
+                    key={skill}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{
+                      opacity: 1,
+                      scale: activeCategory === category.name ? 1.05 : 1,
+                    }}
+                    transition={{ delay: skillIndex * 0.1 }}
+                    className={`
+                      p-3 rounded-lg
+                      bg-white/5 
+                      border border-white/10
+                      hover:border-cyan-300/30
+                      hover:bg-white/10
+                      transition-all duration-300
+                      group-hover:transform group-hover:translate-y-[-2px]
+                      ${category.skills.length === 1 ? "col-span-2" : ""}
+                    `}
+                  >
+                    <p className="text-white/80 text-sm text-center">{skill}</p>
+                  </motion.div>
+                ))}
+              </div>
+
               <motion.div
-                key={`${category.name}-${skill}`}
-                initial={{
-                  x: 0,
-                  y: 0,
-                  scale: 0.5,
-                  opacity: 0,
+                initial={{ opacity: 0 }}
+                animate={{
+                  opacity: activeCategory === category.name ? 1 : 0,
+                  scale: activeCategory === category.name ? 1 : 0.8,
                 }}
-                animate={
-                  isInView
-                    ? {
-                        x: position.x,
-                        y: position.y,
-                        scale: activeSkill === skill ? 1.2 : 1,
-                        opacity: 1,
-                      }
-                    : { x: 0, y: 0, scale: 0.5, opacity: 0 }
-                }
-                transition={{
-                  duration: 0.5,
-                  delay:
-                    (categoryIndex * category.skills.length + skillIndex) * 0.1,
-                }}
-                onMouseEnter={() => setActiveSkill(skill)}
-                onMouseLeave={() => setActiveSkill(null)}
                 className="
-                  absolute w-20 h-20 rounded-full 
-                  bg-white/10 border border-white/20
-                  flex items-center justify-center
-                  cursor-pointer hover:bg-white/20
-                  transition-all duration-300
+                  absolute -bottom-2 left-1/2 transform -translate-x-1/2
+                  w-8 h-1 bg-cyan-300/50 rounded-full
+                  blur-sm
                 "
-              >
-                <span className="text-white text-sm">{skill}</span>
-              </motion.div>
-            );
-          })
-        )}
+              />
+            </motion.div>
+          ))}
+        </div>
 
-        {activeSkill && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="
-              absolute bottom-[-200px] left-1/2 transform -translate-x-1/2
-              bg-white/10 border border-white/20 rounded-xl
-              px-6 py-4 text-center
-            "
-          >
-            <p className="text-white text-lg">{activeSkill}</p>
-            {/* <p className="text-white/70 text-sm">Hover to explore skills</p> */}
-          </motion.div>
-        )}
-      </motion.div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="
+            mt-12 text-center text-white/60 text-sm
+            bg-white/5 rounded-full px-6 py-2 inline-block
+            backdrop-blur-sm border border-white/10
+          "
+        >
+          Hover over categories to explore skills
+        </motion.div>
+      </div>
     </div>
   );
 };
-
 function App() {
   const [activeSection, setActiveSection] = useState("home");
 
   const projects = [
     {
       name: "Placeholder",
-      description:
-        "Innovative React component library  design system",
+      description: "Innovative React component library design system",
       technologies: ["React", "Tailwind", "TypeScript", "docker"],
       link: "#",
     },
     {
       name: "Decentralized Task Manager",
-      description:
-        " collaborative project management platform",
+      description: "collaborative project management platform",
       technologies: ["Next.js", "nestjs", "Solid", "Pgsql"],
       link: "#",
     },
@@ -436,16 +478,7 @@ function App() {
           </div>
         );
       case "skills":
-        return (
-          <div className="min-h-screen flex items-center justify-center p-4">
-            <div className="max-w-4xl w-full">
-              <h2 className="text-4xl font-light text-center text-white mb-12 tracking-tight">
-                Tech <span className="text-cyan-300">Arsenal</span>
-              </h2>
-              <SkillsSphere />
-            </div>
-          </div>
-        );
+        return <SkillsShowcase />;
       default:
         return <HomeSection />;
     }
